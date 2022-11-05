@@ -82,7 +82,10 @@ def post_detail(request, post_id):
 def post_create(request):
     """Viev-функция для создания поста."""
     template = 'posts/create_post.html'
-    form = PostForm(request.POST or None)
+    form = PostForm(
+        request.POST or None,
+        files=request.FILES or None,
+    )
     if form.is_valid():
         post = form.save(commit=False)
         post.author = request.user

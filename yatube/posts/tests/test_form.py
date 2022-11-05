@@ -318,5 +318,6 @@ class PostsFormTests(TestCase):
             Post.objects.filter(
                 text=form_data['text'],
                 author=self.authorized_user,
+                image='posts/image.gif'
             ).exists()
         )
