@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}
+ Пост {{ id }} успешно удален
+{% endblock %}
+{% block content %}
+  <article>
+    <h1>Пост {{ id }} успешно удален</h1>
+    <a href="{% url 'posts:index' %}">
+      Вернутся на главную страницу
+    </a>
+  </article>
+{% endblock %}  

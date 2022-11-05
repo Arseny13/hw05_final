@@ -1,0 +1,25 @@
+{% load thumbnail %}
+<article class="row">
+  <ul class="col-3">
+    <li>
+      Автор: {{ post.author.get_full_name }}
+    </li>
+    <li>
+      Дата публикации: {{ post.pub_date|date:"d E Y" }}
+    </li>
+  </ul>
+  <p class="col-6">
+    {% thumbnail post.image "560x300" crop="center" upscale=True as im %}
+      <img class="card-img my-2" src="{{ im.url }}">
+    {% endthumbnail %}
+    {{ post.text }}
+  </p>
+  <a href="{% url 'posts:post_detail' post.id %}">подробная информация </a>
+  {% if SHOW_GROUP_LINK and post.group  %}
+    <a href="{% url 'posts:group_list' post.group.slug %}">Все записи группы</a>
+  {% endif %}
+  {% if SHOW_PROFILE_LINK %}
+    <a href="{% url 'posts:profile' post.author.username %}">Профиль автора</a>
+  {% endif %}
+</article>
+{% if not forloop.last %}<hr>{% endif %}

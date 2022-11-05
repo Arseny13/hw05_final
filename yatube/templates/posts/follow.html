@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block title %}
+  Подписки пользователя
+{% endblock %}
+{% block content %}
+  <div class="container py-5">
+    <h1 class="card-header"> Подписки пользователя </h1>
+    {% for post in page_obj %}
+      {% include 'includes/post.html' with SHOW_GROUP_LINK=True SHOW_PROFILE_LINK=True %}
+    {% endfor %}
+    {% include 'includes/paginator.html' %}
+  </div>
+{% endblock %}

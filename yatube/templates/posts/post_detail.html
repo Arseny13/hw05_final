@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load thumbnail %}
+{% block title %}
+ Пост {{  post.author.username|truncatewords:30  }}
+{% endblock %}
+{% block content %}
+  <h1> Создатель поста - {{ post.author.username}} </h1>
+  <div class="row">
+    <aside class="col-12 col-md-3">
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item">
+          Дата публикации: {{ post.pub_date|date:"d E Y" }}
+        </li>
+        <li class="list-group-item">
+          Группа: {{ post.group }}
+        {% if post.group  %}
+          <a href="{% url 'posts:group_list' post.group.slug %}">Все записи группы</a>
+        {% endif %}
+        </li>
+        <li class="list-group-item">
+          Автор: {{post.author.get_full_name}}
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          Всего постов автора:  <span >{{ post.author.posts.count }}</span>
+        </li>
+        <li class="list-group-item">
+          <a href="{% url 'posts:profile' post.author.username %}">
+            все посты пользователя
+          </a>
+        </li>
+      </ul>
+    </aside>
+    <article class="col-12 col-md-9">
+      {% thumbnail post.image "560x539" crop="center" upscale=True as im %}
+        <img class="card-img my-2" src="{{ im.url }}">
+      {% endthumbnail %}
+      <p> {{post.text}} </p>
+      {% if post.author == user %}
+        <div class="row">
+          <aside class="col-9 col-md-3">
+            <button type="submit" class="btn btn-dark">
+              <a href="{% url 'posts:post_edit' post.id %}" style="color: #ffffff">
+                Редактировать запись
+              </a>
+            </button>
+          </aside>
+          <aside class="col-9 col-md-6">
+            <form action="{% url 'posts:post_delete' post.id %}"  
+              class="btn btn-danger" style="color: #ffffff" method="post">
+              {% csrf_token %}
+              <button onclick="return confirm('Are you sure?');">Удалить запись</button>
+            </form>
+          </aside>
+        </div>
+      {%endif%}
+      {% include 'includes/comment.html' %}
+    </article>
+  </div>
+{% endblock %}  
