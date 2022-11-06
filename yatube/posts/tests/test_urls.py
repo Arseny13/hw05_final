@@ -37,6 +37,7 @@ class PostsURLTests(TestCase):
             f'/group/{group.slug}/': HTTPStatus.OK,
             f'/posts/{post.id}/': HTTPStatus.OK,
             f'/profile/{post.author.username}/': HTTPStatus.OK,
+            '/follow/': HTTPStatus.FOUND,
             'unexising_page': HTTPStatus.NOT_FOUND,
         }
         for address, code in urls.items():
@@ -56,6 +57,7 @@ class PostsURLTests(TestCase):
             f'/posts/{post.id}/': HTTPStatus.OK,
             f'/profile/{post.author.username}/': HTTPStatus.OK,
             '/create/': HTTPStatus.OK,
+            '/follow/': HTTPStatus.OK,
             '/unexising_page': HTTPStatus.NOT_FOUND,
         }
         for address, code in urls.items():
@@ -100,6 +102,7 @@ class PostsURLTests(TestCase):
             f'/posts/{post.id}/': 'posts/post_detail.html',
             f'/profile/{post.author.username}/': 'posts/profile.html',
             '/create/': 'posts/create_post.html',
+            '/follow/': 'posts/follow.html',
         }
         for address, template in templates_url_names.items():
             with self.subTest(address=address):

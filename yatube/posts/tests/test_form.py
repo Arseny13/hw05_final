@@ -256,35 +256,6 @@ class PostsFormTests(TestCase):
             reverse('posts:post_detail', kwargs={'post_id': post_group.id})
         )
 
-    def test_created_comment_only_authorized(self):
-        """Тест на проверку создания комментариев для авторизованного."""
-        post = PostsFormTests.post
-        comment_count = post.comments.count()
-        form_data = {
-            'text': 'Коммент',
-        }
-        response = self.authorized_client.post(
-            reverse('posts:add_comment', kwargs={'post_id': post.id}),
-            data=form_data,
-            follow=True
-        )
-        self.assertTrue(
-            Comment.objects.filter(
-                post=post,
-                text=form_data['text'],
-                author=self.authorized_user,
-            ).exists(),
-        )
-        self.assertEqual(
-            post.comments.count(),
-            comment_count + 1,
-            'Не появился новый коммент.'
-        )
-        self.assertRedirects(
-            response,
-            reverse('posts:post_detail', kwargs={'post_id': post.id})
-        )
-
     def test_create_post_with_image_authorized(self):
         """Тест на проверку на создания post с картинкой
         для авторизованного пользователя.
@@ -320,4 +291,64 @@ class PostsFormTests(TestCase):
                 author=self.authorized_user,
                 image='posts/image.gif'
             ).exists()
+        )
+
+    def test_created_comment(self):
+        """Тест на проверку создания комментариев для не авторизованного."""
+        post = PostsFormTests.post
+        comment_count = post.comments.count()
+        form_data = {
+            'text': 'Коммент',
+        }
+        response = self.guest_client.post(
+            reverse('posts:add_comment', kwargs={'post_id': post.id}),
+            data=form_data,
+            follow=True
+        )
+        self.assertEqual(
+            post.comments.count(),
+            comment_count,
+            'Появился новый коммент.'
+        )
+        self.assertRedirects(
+            response,
+            f'/auth/login/?next=/posts/{post.id}/comment'
+        )
+
+    def test_created_comment_only_authorized(self):
+        """Тест на проверку создания комментариев для авторизованного."""
+        post = PostsFormTests.post
+        comment_count = post.comments.count()
+        form_data = {
+            'text': 'Коммент',
+        }
+        response = self.authorized_client.post(
+            reverse('posts:add_comment', kwargs={'post_id': post.id}),
+            data=form_data,
+            follow=True
+        )
+        self.assertTrue(
+            Comment.objects.filter(
+                post=post,
+                text=form_data['text'],
+                author=self.authorized_user,
+            ).exists(),
+        )
+        self.assertEqual(
+            post.comments.count(),
+            comment_count + 1,
+            'Не появился новый коммент.'
+        )
+        response = self.authorized_client.get(
+            reverse('posts:post_detail', kwargs={'post_id': post.id})
+        )
+        self.assertEqual(
+            response.context.get('comments')[0].text,
+            form_data['text'],
+            'Контекст комментария не совпадает с текстом отрпавленного.'
+        )
+        self.assertEqual(
+            response.context.get('comments')[0].post,
+            post,
+            'Комментарий относится не к тому посту.'
         )

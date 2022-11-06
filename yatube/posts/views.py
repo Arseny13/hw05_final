@@ -25,8 +25,7 @@ def index(request):
     page_obj = paginator_page(request, posts)
     context = {
         'page_obj': page_obj,
-        'index': False,
-        'follow': False,
+        'index': True,
     }
     return render(request, template, context)
 
@@ -48,12 +47,12 @@ def profile(request, username):
     """Viev-функция для страницы профиля."""
     template = 'posts/profile.html'
     user = get_object_or_404(User, username=username)
-    following = 0
-    if not request.user.is_anonymous:
-        following = Follow.objects.filter(
+    following = (not request.user.is_anonymous) and (
+        Follow.objects.filter(
             user=request.user,
             author=user
         ).exists()
+    )
     posts_list = user.posts.all()
     page_obj = paginator_page(request, posts_list)
     context = {
@@ -69,7 +68,7 @@ def post_detail(request, post_id):
     template = 'posts/post_detail.html'
     post = get_object_or_404(Post, pk=post_id)
     comment_list = post.comments.all()
-    form = CommentForm(request.POST or None)
+    form = CommentForm()
     context = {
         'post': post,
         'comments': comment_list,
@@ -172,12 +171,12 @@ def follow_index(request):
     """Viev-функция для подписок."""
     template = 'posts/follow.html'
     user = request.user
-    followers_list = Follow.objects.filter(user=user).values('author')
-    posts_list = Post.objects.filter(author__in=followers_list)
+    posts_list = Post.objects.filter(author__following__user=request.user)
     page_obj = paginator_page(request, posts_list)
     context = {
         'author': user,
         'page_obj': page_obj,
+        'follow': True,
     }
     return render(request, template, context)
 
@@ -187,11 +186,8 @@ def profile_follow(request, username):
     """Viev-функция для оформления подписки."""
     user = request.user
     follow = get_object_or_404(User, username=username)
-    if not Follow.objects.filter(
-        user=user,
-        author=follow
-    ).exists() and follow != user:
-        Follow.objects.create(
+    if follow != user:
+        Follow.objects.get_or_create(
             user=user,
             author=follow
         )

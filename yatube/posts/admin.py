@@ -1,7 +1,7 @@
 """Подключение модулей."""
 from django.contrib import admin
 
-from .models import Follow, Group, Post
+from .models import Follow, Group, Post, Comment
 
 
 class GroupAdmin(admin.ModelAdmin):
@@ -28,6 +28,16 @@ class PostAdmin(admin.ModelAdmin):
     empty_value_display = '-пусто-'
 
 
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ('post',
+                    'author',
+                    'text',
+                    'created'
+                    )
+    search_fields = ('text',)
+    list_filter = ('created',)
+
+
 class FollowAdmin(admin.ModelAdmin):
     list_display = ('user',
                     'author'
@@ -36,4 +46,5 @@ class FollowAdmin(admin.ModelAdmin):
 
 admin.site.register(Post, PostAdmin)
 admin.site.register(Group, GroupAdmin)
+admin.site.register(Comment, CommentAdmin)
 admin.site.register(Follow, FollowAdmin)

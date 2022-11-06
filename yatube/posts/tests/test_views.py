@@ -81,6 +81,9 @@ class PostsPagesTests(TestCase):
             'posts/post_detail.html': (
                 reverse('posts:post_detail', kwargs={'post_id': post.id})
             ),
+            'posts/follow.html': (
+                reverse('posts:follow_index')
+            ),
         }
         for template, reverse_name in templates_pages_names.items():
             with self.subTest(reverse_name=reverse_name):
@@ -260,31 +263,6 @@ class PostsPagesTests(TestCase):
             response.context.get('group'),
             self.group,
             'Контекст группа не совпадает с группой.'
-        )
-
-    def test_post_detail_show_comment(self):
-        """Страница поста показывает комментарий."""
-        post = PostsPagesTests.post
-        form_data = {
-            'text': 'Коммент',
-        }
-        response = self.authorized_client.post(
-            reverse('posts:add_comment', kwargs={'post_id': post.id}),
-            data=form_data,
-            follow=True
-        )
-        response = self.authorized_client.get(
-            reverse('posts:post_detail', kwargs={'post_id': post.id})
-        )
-        self.assertEqual(
-            response.context.get('comments')[0].text,
-            form_data['text'],
-            'Контекст комментария не совпадает с текстом отрпавленного.'
-        )
-        self.assertEqual(
-            response.context.get('comments')[0].post,
-            post,
-            'Комментарий относится не к тому посту.'
         )
 
     def test_checked_cache(self):

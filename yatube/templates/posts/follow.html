@@ -3,6 +3,7 @@
   Подписки пользователя
 {% endblock %}
 {% block content %}
+{% include 'includes/switcher.html' %} 
   <div class="container py-5">
     <h1 class="card-header"> Подписки пользователя </h1>
     {% for post in page_obj %}

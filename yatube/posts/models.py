@@ -78,18 +78,28 @@ class Comment(models.Model):
         Post,
         on_delete=models.CASCADE,
         related_name='comments',
+        verbose_name='Пост',
     )
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name='comments',
+        verbose_name='Автор',
     )
-    text = models.TextField()
+    text = models.TextField(
+        verbose_name='Текст',
+        help_text='Введите текст комментария',
+    )
     created = models.DateTimeField(
+        verbose_name='Дата создания',
         auto_now_add=True,
     )
 
+    def __str__(self) -> str:
+        return self.text[:COUNT_CHAR_POST_TEXT]
+
     class Meta:
+        """Класс Meta для Comment описание метаданных."""
         verbose_name = 'comment'
         verbose_name_plural = 'comments'
 
@@ -105,3 +115,11 @@ class Follow(models.Model):
         related_name='following',
         on_delete=models.CASCADE,
     )
+
+    def __str__(self) -> str:
+        return self.user.username
+
+    class Meta:
+        """Класс Meta для Follow описание метаданных."""
+        verbose_name = 'follow'
+        verbose_name_plural = 'follows'
