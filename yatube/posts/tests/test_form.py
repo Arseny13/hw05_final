@@ -339,16 +339,7 @@ class PostsFormTests(TestCase):
             comment_count + 1,
             'Не появился новый коммент.'
         )
-        response = self.authorized_client.get(
+        self.assertRedirects(
+            response,
             reverse('posts:post_detail', kwargs={'post_id': post.id})
-        )
-        self.assertEqual(
-            response.context.get('comments')[0].text,
-            form_data['text'],
-            'Контекст комментария не совпадает с текстом отрпавленного.'
-        )
-        self.assertEqual(
-            response.context.get('comments')[0].post,
-            post,
-            'Комментарий относится не к тому посту.'
         )

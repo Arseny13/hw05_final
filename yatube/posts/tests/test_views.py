@@ -8,7 +8,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client, TestCase, override_settings
 from django.urls import reverse
 
-from posts.models import Follow, Group, Post, User
+from posts.models import Follow, Group, Post, User, Comment
 
 TEMP_MEDIA_ROOT = tempfile.mkdtemp(dir=settings.BASE_DIR)
 
@@ -52,6 +52,11 @@ class PostsPagesTests(TestCase):
             text='Тестовый пост',
             group=cls.group,
             image=uploaded,
+        )
+        cls.comment = Comment.objects.create(
+            post=cls.post,
+            author=cls.user,
+            text='Первый комментарий у поста.'
         )
 
     @classmethod
@@ -147,6 +152,7 @@ class PostsPagesTests(TestCase):
     def test_post_detail_show_correct_context(self):
         """Шаблон post_detail с правильным контекстом."""
         post = PostsPagesTests.post
+        comment = PostsPagesTests.comment
         response = self.authorized_client.get(
             reverse('posts:post_detail', kwargs={'post_id': post.id})
         )
@@ -169,6 +175,11 @@ class PostsPagesTests(TestCase):
             response.context.get('post').author,
             post.author,
             'Другой автор.'
+        )
+        self.assertEqual(
+            response.context.get('comments')[0],
+            comment,
+            'Комментарий относится не к этому посту'
         )
 
     def test_urls_show_correct_image(self):
