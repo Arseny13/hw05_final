@@ -1,6 +1,5 @@
 from django.test import TestCase
-
-from posts.models import COUNT_CHAR_POST_TEXT, Group, Post, User, Comment
+from posts.models import COUNT_CHAR_POST_TEXT, Comment, Group, Post, User
 
 
 class PostModelTest(TestCase):
