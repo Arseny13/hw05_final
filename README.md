@@ -1,6 +1,4 @@
 # Yatube 
-<h1 align="center"> # Yatube </h1>
-
 ___
 <h2>Описание</h2>
 
