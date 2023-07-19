@@ -62,3 +62,17 @@ pip install -r requirements.txt
 ```
 python manage.py runserver
 ```
+
+<h2>Используемые технологии</h2>
+
+- Django==2.2.28
+- mixer==7.1.2
+- Pillow==9.3.0
+- pytest==6.2.4
+- pytest-django==4.4.0
+- pytest-pythonpath==0.7.3
+- requests==2.26.0
+- six==1.16.0
+- sorl-thumbnail==12.7.0
+- Faker==12.0.1
+- python-dotenv==0.21.0
